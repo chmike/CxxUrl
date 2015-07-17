@@ -1,6 +1,6 @@
 # A simple C++ URL class
 
-## The `Url` object API
+### The `Url` object API
 `Url` is a C++ URL handling class with a very simple API. It's use is straigthforward.
 
 * Construct an `Url` object
@@ -67,12 +67,13 @@
          "query(<key(q) val(some search key)> <key(fast) val()>)}");
   ```
 
-## Implementation detail
+### Implementation detail
 
 The `Url` object uses lazy URL parsing and building. When a URL as string is
 assigned to the object, it is not immediatly parsed. It can then be assigned or
 moved to another `Url` object efficiently. The URL is parsed only when needed,
-which is before one the fields is accessed or set, or when the object is output.
+which is before one of the fields is accessed or set, or when the object is 
+output.
 
 The URL is built only when the `str()` method is called or when the `Url` object
 is output.
