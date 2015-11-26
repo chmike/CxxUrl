@@ -591,11 +591,10 @@ Url &Url::user_info(const std::string& s) {
 }
 
 
-Url &Url::host(const std::string& h) {
+Url &Url::host(const std::string& h, std::uint8_t ip_v) {
     if (h.length()>253)
         throw Url::parse_error("Host is longer than 253 characters '"+h+"'");
     lazy_parse();
-    std::uint16_t ip_v;
     std::string o;
     if (h.empty())
         ip_v=-1;
@@ -603,6 +602,11 @@ Url &Url::host(const std::string& h) {
         if (!is_valid_ipv4(h))
             throw Url::parse_error("Invalid IPv4 address '"+h+"'");
         ip_v=4;
+        o=h;
+    } else if(ip_v!=0&&ip_v!=4&&ip_v!=6) {
+        if (!is_ipv6(h)) {
+            throw Url::parse_error("Invalid IPvFuture address '"+h+"'");
+        }
         o=h;
     } else if (is_ipv6(h)) {
         if (!is_valid_ipv6(h))
@@ -715,7 +719,7 @@ void Url::parse_url() const {
         if (p!=e && *p=='/' && (e-b)>1 && b[0]=='/' && b[1]=='/') {
             const char *ea=find_first_of(b+=2, e, "/?#"); // locate end of authority
             p=find_char(b, ea, '@');
-            // get user ino if any
+            // get user info if any
             if (p!=ea) {
                 if (!is_chars(b, p, 0x05))
                     throw Url::parse_error("User info in '"+std::string(s,e-s)+"' is invalid");
@@ -723,35 +727,46 @@ void Url::parse_url() const {
                 user_e=p;
                 b=p+1;
             }
-            p=find_first_of(b, ea, "[v:");
-            // get host if any
-            if (p!=ea && *p=='[') {
-                if (b!=p)
-                    throw Url::parse_error("IPv6 address in '"+std::string(s,e-s)+"' is invalid");
-                p=find_char(b+1, ea, ']');
-                if (*p!=']' || !is_ipv6(b,p-1))
-                    throw Url::parse_error("IPv6 address '"+std::string(b,p-b)+"' in '"+std::string(s,e-s)+"' is invalid");
-                host_b=b;
-                host_e=p-1;
-                ip_v=6;
-                p=find_char(b=p+1, ea, ':');
-            } else if (p!=ea && *p=='v') {
-                throw Url::parse_error("IP address '"+std::string(b,p-b)+"' in '"+std::string(s,e-s)+"' is unsupported");
-            } else {
+            // Get IP literal if any
+            if (*b=='[') {
+                // locate end of IP literal
+                p=find_char(++b, ea, ']');
+                if (*p!=']')
+                    throw Url::parse_error("Missing ] in '"+std::string(s,e-s)+"'");
+                // decode IPvFuture protocol version
+                if (*b=='v') {
+                    if (is_hexdigit(*++b)) {
+                        ip_v=get_hex_digit(*b);
+                        if (is_hexdigit(*++b)) {
+                            ip_v=(ip_v<<8)|get_hex_digit(*b);
+                        }
+                    }
+                    if (ip_v==-1||*b++!='.'||!is_chars(b,p,0x05))
+                        throw Url::parse_error("Host address in '"+std::string(s,e-s)+"' is invalid");
+                } else if (is_ipv6(b,p)) {
+                    ip_v=6;
+                } else
+                    throw Url::parse_error("Host address in '"+std::string(s,e-s)+"' is invalid");
                 host_b=b;
                 host_e=p;
+                b=p+1;
+            } else {
+                p=find_char(b, ea, ':');
                 if (is_ipv4(b, p))
                     ip_v=4;
                 else if (is_reg_name(b, p))
                     ip_v=0;
                 else
-                    throw Url::parse_error("Host "+std::string(b,p-b)+" in '"+std::string(s,e-s)+"' is invalid");
+                    throw Url::parse_error("Host address in '"+std::string(s,e-s)+"' is invalid");
+                host_b=b;
+                host_e=p;
+                b=p;
             }
             //get port if any
-            if (p!=ea && *p==':') {
-                if (!is_port(++p, ea))
+            if (b!=ea&&*b==':') {
+                if (!is_port(++b, ea))
                     throw Url::parse_error("Port '"+std::string(b,ea-b)+"' in '"+std::string(s,e-s)+"' is invalid");
-                port_b=p;
+                port_b=b;
                 port_e=ea;
             }
             b=ea;
@@ -836,10 +851,12 @@ void Url::build_url() const {
         url<<"//";
         if (!m_user.empty())
             url<<encode(m_user, 0x05)<<'@';
-        if (m_ip_v==6)
+        if (m_ip_v==0||m_ip_v==4)
+            url<<m_host;
+        else if (m_ip_v==6)
             url<<"["<<m_host<<"]";
         else
-            url<<m_host;
+            url<<"[v"<<std::hex<<(int)m_ip_v<<std::dec<<'.'<<m_host<<"]";
         if (!m_port.empty())
             if (!((m_scheme=="http"&&m_port=="80")||(m_scheme=="https"&&m_port=="443")))
                 url<<":"<<m_port;

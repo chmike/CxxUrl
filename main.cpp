@@ -341,6 +341,15 @@ void test_all_valid() {
     test_valid(str,"?a=b;cd+ef",query(1).key,"cd ef",-1);
     test_valid(str,"?a=b;cd+ef",query(1).val,"",-1);
     test_invalid(str,"?a=b;cd+ef",query(2).key,"Invalid Url query index (2)");
+
+    test_valid(str,"http://bavaria.com",str,"http://bavaria.com",0);
+    test_valid(str,"http://1.2.3.4",str,"http://1.2.3.4",4);
+    test_valid(str,"http://[1:2:3:4:5:6:7:8]",str,"http://[1:2:3:4:5:6:7:8]",6);
+    test_valid(str,"http://[v7.1:2:3:4:5:6:7:8]",str,"http://[v7.1:2:3:4:5:6:7:8]",7);
+    test_invalid(str,"http://[v7.1:2:3:4:5:6:7:8]:",str,"Port '' in 'http://[v7.1:2:3:4:5:6:7:8]:' is invalid");
+    test_valid(str,"http://bavaria.com:12",str,"http://bavaria.com:12",0);
+    test_valid(str,"http://1.2.3.4:12",str,"http://1.2.3.4:12",4);
+    test_valid(str,"http://[1:2:3:4:5:6:7:8]:0",str,"http://[1:2:3:4:5:6:7:8]:0",6);
 }
 
 
@@ -400,6 +409,15 @@ int main()
     Url u4(std::move(u1));
     u2=std::move(u3);
     cout << u2.str() << endl;
+
+    u1.str("http://bavaria.com");
+    cout << u1.str() << endl;
+    assert(u1.str()=="http://bavaria.com");
+
+    u1.str("http://[::]");
+    cout << u1.str() << endl;
+    assert(u1.str()=="http://[::]");
+
 
     cout << "processing time: " <<  double(clock() - start) / CLOCKS_PER_SEC << endl;
     return 0;

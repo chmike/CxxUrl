@@ -70,7 +70,7 @@ public:
     const std::string& host() const {lazy_parse(); return m_host;}
 
     // Set host
-    Url &host(const std::string& h);
+    Url &host(const std::string& h, uint8_t ip_v=0);
 
     // Get host IP version: 0=name, 4=IPv4, 6=IPv6, -1=undefined
     std::int8_t ip_version() const {lazy_parse(); return m_ip_v;}
