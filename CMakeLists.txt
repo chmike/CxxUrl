@@ -35,6 +35,6 @@ set(SOURCES
         ${HEADERS}
         ${CMAKE_CURRENT_SOURCE_DIR}/url.cpp)
 
-add_library(cxxurl SHARED ${SOURCES})
-set_target_properties(cxxurl PROPERTIES SOVERSION 1)
-set_target_properties(cxxurl PROPERTIES PUBLIC_HEADER url.hpp)
+add_library(CxxUrl SHARED ${SOURCES})
+set_target_properties(CxxUrl PROPERTIES SOVERSION 1)
+set_target_properties(CxxUrl PROPERTIES PUBLIC_HEADER url.hpp)
