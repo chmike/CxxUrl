@@ -1,14 +1,13 @@
 #ifndef URL_HPP
 #define URL_HPP
 
-#include <string>
 #include <vector>
 #include <utility>
 #include <stdexcept>
 #include <cstdint>
 #include <ostream>
 #include <utility>
-
+#include "string.hpp"
 
 class Url {
 public:
