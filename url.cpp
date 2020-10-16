@@ -514,7 +514,7 @@ class encode_query_val {
             else if (is_char(c,e.m_mask))
                 o<<c;
             else
-                o<<'%'<<"0123456789ABCDEF"[c>>4]<<"0123456789ABCDEF"[c&0xF];
+                o<<'%'<<"0123456789ABCDEF"[((uint8_t)c)>>4]<<"0123456789ABCDEF"[((uint8_t)c)&0xF];
         return o;
     }
 };
