@@ -877,20 +877,23 @@ void Url::build_url() const {
         url<<encode(m_path, 0x0F);
     }
     if (!m_query.empty()) {
-        url<<"?";
+        std::stringstream str;
+        str<<"?";
         auto it = m_query.begin(), end = m_query.end();
         if (it->key().empty())
             throw Url::build_error("First query entry has no key");
-        url<<encode_query_key(it->key(), 0x1F);
+        str<<encode_query_key(it->key(), 0x1F);
         if (!it->val().empty())
-            url<<"="<<encode_query_val(it->val(), 0x1F);
+            str<<"="<<encode_query_val(it->val(), 0x1F);
         while(++it!=end) {
             if (it->key().empty())
                 throw Url::build_error("A query entry has no key");
-            url<<"&"<<encode_query_key(it->key(), 0x1F);
+            str<<"&"<<encode_query_key(it->key(), 0x1F);
             if (!it->val().empty())
-                url<<"="<<encode_query_val(it->val(), 0x1F);
+                str<<"="<<encode_query_val(it->val(), 0x1F);
         }
+        m_query_str=std::move(str).str();
+        url<<m_query_str;
     }
     if (!m_fragment.empty())
         url<<"#"<<encode(m_fragment, 0x1F);

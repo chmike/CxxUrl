@@ -132,6 +132,7 @@ public:
 
     // Get a reference to the query vector for read only access
     const Query& query() const {lazy_parse(); return m_query;}
+    const std::string& query_str() const {if(!m_built) build_url(); return m_query_str; }
 
     // Get a reference to a specific Key Value pair in the query vector for read only access
     const KeyVal& query(size_t i) const {
@@ -194,6 +195,7 @@ private:
     mutable std::string m_port;
     mutable std::string m_path;
     mutable Query m_query;
+    mutable std::string m_query_str;
     mutable std::string m_fragment;
     mutable std::string m_url;
     mutable bool m_parse;
