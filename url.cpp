@@ -309,6 +309,9 @@ std::string normalize_IPv6(const char *s, const char *e) {
     i = nfields;
     nfields=(ipv4_b)?6:8;
     if (i<nfields) {
+        if (i<null_pos) {
+            throw Url::parse_error("IPv6 ["+std::string(s,e-s)+"] is invalid");
+        }
         size_t last=nfields;
         if (i!=null_pos)
             do fields[--last]=fields[--i]; while (i!=null_pos);
