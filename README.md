@@ -77,3 +77,15 @@ output.
 
 The URL is built only when the `str()` method is called or when the `Url` object
 is output.
+
+### Testing the library
+
+In order to quickly build a static library and test the code, the following 
+sequence of bash instructions may work for you. 
+
+```
+g++ -c url.cpp
+ar rvs CxxUrl.a url.o
+g++ main.cpp CxxUrl.a
+./a.out
+```
