@@ -1,7 +1,7 @@
 # A simple C++ URL class
 
 ### The `Url` object API
-`Url` is a C++ URL handling class with a very simple API. It's use is straigthforward.
+`Url` is a C++ URL handling class with a very simple API. It's use is straightforward.
 
 * Construct an `Url` object
   ``` C++
