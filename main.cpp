@@ -7,6 +7,17 @@
 
 using namespace std;
 
+#define test_parse(str, m, expect) {\
+    try {\
+        Url url(str);\
+        if(url.m()!=expect)\
+            cout << "FAILED: ('" << str << "') -> "#m"('" << url.m() << "') (expect " << expect << ")" << endl;\
+        else\
+            cout << "PASSED: ('" << str << "') -> "#m"('" << url.m() << "')" << endl;\
+    } catch(std::exception &e) {\
+        cout << "FAILED: ('" << str << "') -> \"" << e.what() << "\" (expect " << expect << ")" << endl;\
+    }\
+}
 
 
 #define test_valid(m1,str,m2,expect,ip_v) {\
@@ -56,6 +67,7 @@ void test_all_valid() {
     cout << "------------------------------------------------------" << endl;
     test_valid(user_info,"",user_info,"",-1);
     test_valid(user_info,"user:passwd",user_info,"user:passwd",-1);
+    test_parse("http://user:pa%24%24wd@www.example.com",user_info,"user:pa$$wd");
 
     cout << "------------------------------------------------------" << endl;
     cout << "Test host" << endl;
