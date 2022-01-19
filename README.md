@@ -3,6 +3,8 @@
 ### The `Url` object API
 `Url` is a C++ URL handling class with a very simple API. It's use is straightforward.
 
+URIs that don't follow the URL standard defined in [RFC3986](https://datatracker.ietf.org/doc/html/rfc3986) might not be correctly parsed in all cases.
+
 * Construct an `Url` object
   ``` C++
   Url u1;
