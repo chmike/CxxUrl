@@ -1,0 +1,7 @@
+@PACKAGE_INIT@
+
+if(NOT TARGET @INSTALL_TEST_TARGET@)
+  include ("${CMAKE_CURRENT_LIST_DIR}/@TARGETS_FILE_NAME@")
+endif()
+
+check_required_components(@PACKAGE_NAME@)
