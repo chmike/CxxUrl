@@ -1,5 +1,25 @@
 # A simple C++ URL class
 
+## Usage
+
+### CMake
+
+If you are developing your project with CMake you can include this library with the `find_package` mechanism of CMake.
+First, either run `make install` or include this project via `add_subdirectory`.
+Afterwards, you can link to this lib like so:
+
+```CMake
+cmake_minimum_required(VERSION 3.4)
+
+project(example_find_package)
+
+find_package(CxxUrl REQUIRED)
+
+add_executable(${PROJECT_NAME} main.cpp)
+
+target_link_libraries(${PROJECT_NAME} PUBLIC chmike::CxxUrl)
+```
+
 ### The `Url` object API
 `Url` is a C++ URL handling class with a very simple API. It's use is straightforward.
 
