@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.4)
+cmake_minimum_required(VERSION 3.10)
 project(CxxUrl
     VERSION 0.3.0
 )
@@ -11,6 +11,7 @@ project(CxxUrl
 #*********************************************************
 
 option(ENABLE_INSTALL "Flag to indicate if the install target should be available" ON)
+option(CxxUrl_BUILD_STATIC_LIBS "Whether build shared or static" ON)
 
 if(${PROJECT_IS_TOP_LEVEL})
     # This will be executed if the current project is top level
@@ -54,7 +55,12 @@ set(SOURCES
         ${HEADERS}
         ${CMAKE_CURRENT_SOURCE_DIR}/url.cpp)
 
-add_library(${TARGET_NAME} SHARED ${SOURCES})
+if(CxxUrl_BUILD_STATIC_LIBS)
+    add_library(${TARGET_NAME} STATIC ${SOURCES})
+else()
+    add_library(${TARGET_NAME} SHARED ${SOURCES})
+endif()
+
 add_library(${NAMESPACE}::${TARGET_NAME} ALIAS ${TARGET_NAME})
 
 set_target_properties(${TARGET_NAME} PROPERTIES CXX_STANDARD 11 CXX_STANDARD_REQUIRED ON)
