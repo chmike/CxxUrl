@@ -12,6 +12,7 @@ project(CxxUrl
 
 option(ENABLE_INSTALL "Flag to indicate if the install target should be available" ON)
 option(CxxUrl_BUILD_STATIC_LIBS "Whether build shared or static" ON)
+option(CxxUrl_BUILD_TESTS "Whether to build the tests" OFF)
 
 if(${PROJECT_IS_TOP_LEVEL})
     # This will be executed if the current project is top level
@@ -78,6 +79,13 @@ target_include_directories(CxxUrl
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
         $<INSTALL_INTERFACE:${INSTALL_HEADER_INCLUDE_DIR}>
 )
+
+if(${CxxUrl_BUILD_TESTS})
+    enable_testing()
+    add_executable(CxxUrl-test main.cpp)
+    target_link_libraries(CxxUrl-test CxxUrl)
+    add_test(NAME CxxUrl-test COMMAND CxxUrl-test)
+endif()
 
 if(${ENABLE_INSTALL})
     set(PACKAGE_NAME ${PROJECT_NAME}) # the package name is what you write in find_package
